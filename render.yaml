@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: stokvel-sami
+    env: python
+    branch: master
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn main:app"
+    envVars:
+      - key: DATABASE_URL
+        value: "sqlite:///stokvel_sami.db"
