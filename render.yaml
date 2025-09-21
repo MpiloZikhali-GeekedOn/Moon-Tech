@@ -8,3 +8,5 @@ services:
     envVars:
       - key: DATABASE_URL
         value: "sqlite:///stokvel_sami.db"
+runtime: python
+pythonVersion: 3.11
