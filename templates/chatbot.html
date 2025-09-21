@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stokvel Sami - Mpilo Assistant</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chatbot-window {
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        .chatbot-window.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .chatbot-status {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 5px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: #4e54c8;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background: white;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestions {
+            padding: 10px 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .suggestion-chip {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 18px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: #4e54c8;
+            color: white;
+        }
+
+        .typing-indicator {
+            padding: 10px 15px;
+            color: #6c757d;
+            font-size: 0.85rem;
+            display: none;
+            background: #f8f9fa;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chatbot-input button {
+            background: #4e54c8;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Online status indicator */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Chatbot HTML Structure -->
+    <div class="chatbot-container">
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-title">
+                    <i class="bi bi-robot"></i>
+                    <span>Mpilo Assistant <span class="status-indicator"></span><span class="chatbot-status">Online</span></span>
+                </div>
+                <button class="close-chat" id="closeChat">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatMessages">
+                <div class="message bot-message">
+                    Hello! I'm Mpilo, your Stokvel Sami AI assistant. How can I help you today?
+                </div>
+                <div class="message bot-message">
+                    I can help you with stokvel management, product recommendations, property investments, and more!
+                </div>
+            </div>
+            <div class="suggestions">
+                <div class="suggestion-chip" onclick="sendSuggestion('How do I create a stokvel?')">Create Stokvel</div>
+                <div class="suggestion-chip" onclick="sendSuggestion('Product recommendations')">Products</div>
+                <div class="suggestion-chip" onclick="sendSuggestion('Property investments')">Properties</div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                Mpilo is typing...
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="userInput" placeholder="Ask about stokvels, products, or properties...">
+                <button id="sendButton">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot-icon" id="chatbotIcon">
+            <i class="bi bi-chat-dots"></i>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatbotIcon = document.getElementById('chatbotIcon');
+        const closeChat = document.getElementById('closeChat');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // Toggle chatbot window
+        chatbotIcon.addEventListener('click', () => {
+            chatbotWindow.classList.add('active');
+            chatbotIcon.style.display = 'none';
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatbotWindow.classList.remove('active');
+            setTimeout(() => {
+                chatbotIcon.style.display = 'flex';
+            }, 300);
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                userInput.value = '';
+
+                // Show typing indicator
+                typingIndicator.classList.add('active');
+
+                // Simulate AI response after a short delay
+                setTimeout(() => {
+                    typingIndicator.classList.remove('active');
+                    getAIResponse(message);
+                }, 1000 + Math.random() * 1000); // Random delay between 1-2 seconds
+            }
+        }
+
+        // Send button click event
+        sendButton.addEventListener('click', sendMessage);
+
+        // Enter key event
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Suggestion chip handler
+        function sendSuggestion(suggestion) {
+            userInput.value = suggestion;
+            sendMessage();
+        }
+
+        // Add message to chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+            messageDiv.textContent = text;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Get AI response based on user message
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            let response = '';
+
+            // Stokvel-related queries
+            if (lowerMessage.includes('stokvel') || lowerMessage.includes('group') || lowerMessage.includes('savings')) {
+                if (lowerMessage.includes('create') || lowerMessage.includes('make') || lowerMessage.includes('start')) {
+                    response = "To create a stokvel, go to your dashboard and click 'Create Stokvel'. You'll need to set a name, target amount, duration, and member limit. You can also choose to let Stokvel Sami help grow your savings!";
+                } else if (lowerMessage.includes('join') || lowerMessage.includes('participate')) {
+                    response = "To join a stokvel, you'll need a join code from the stokvel admin. Go to the 'Join Stokvel' page and enter the code. Once accepted, you'll be part of the group and can start contributing!";
+                } else if (lowerMessage.includes('contribute') || lowerMessage.includes('pay') || lowerMessage.includes('contribution')) {
+                    response = "Stokvel contributions are typically made monthly. The amount is calculated by dividing the target amount by the duration. You can view your contribution amount and due dates in your stokvel dashboard.";
+                } else {
+                    response = "Stokvels are community-based savings groups where members contribute regularly towards a common goal. With Stokvel Sami, you can easily create, manage, and grow your stokvel digitally. Would you like to know more about creating or joining a stokvel?";
+                }
+            }
+            // Product-related queries
+            else if (lowerMessage.includes('product') || lowerMessage.includes('item') || lowerMessage.includes('shop') || lowerMessage.includes('buy')) {
+                if (lowerMessage.includes('recommend') || lowerMessage.includes('suggest')) {
+                    response = "I can help you find products based on your budget! Visit the 'Product Recommendations' page and enter your budget. Our AI will suggest the best value products for you. You can also browse by category.";
+                } else if (lowerMessage.includes('category') || lowerMessage.includes('type')) {
+                    response = "We have products across various categories like groceries, electronics, household items, and more. You can browse by category in the 'Category Recommendations' section.";
+                } else if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('budget')) {
+                    response = "Our product recommendations are tailored to your budget. Just tell us how much you want to spend, and we'll find the best products for that amount. You can also set filters for minimum quality or specific categories.";
+                } else {
+                    response = "I can help you find great products at the best prices! We have AI-powered recommendations based on your budget and preferences. Would you like to know about our recommendation system or browse specific categories?";
+                }
+            }
+            // Property-related queries
+            else if (lowerMessage.includes('property') || lowerMessage.includes('real estate') || lowerMessage.includes('house') || lowerMessage.includes('apartment') || lowerMessage.includes('investment')) {
+                if (lowerMessage.includes('recommend') || lowerMessage.includes('suggest')) {
+                    response = "For property recommendations, visit our 'Property Investments' page. You can filter by country, maximum price, and minimum quality score. Our system will show you the best property investment opportunities.";
+                } else if (lowerMessage.includes('country') || lowerMessage.includes('location')) {
+                    response = "We have property listings from various countries. You can filter by specific countries or browse all available properties. Popular destinations include Turkey, UAE, USA, and many European countries.";
+                } else if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('investment')) {
+                    response = "Property prices vary based on location, size, and quality. You can set a maximum price filter to find properties within your budget. We also provide a quality score to help you evaluate the value.";
+                } else {
+                    response = "Looking to invest in property? Our platform offers curated property listings from around the world. You can filter by location, price range, and quality metrics. Would you like to know more about our property recommendation system?";
+                }
+            }
+            // General assistance
+            else if (lowerMessage.includes('help') || lowerMessage.includes('support') || lowerMessage.includes('how')) {
+                response = "I'm here to help! I can assist with: 1) Stokvel creation and management, 2) Product recommendations, 3) Property investments, 4) General guidance. What would you like to know more about?";
+            }
+            // Greetings
+            else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+                response = "Hello! I'm Mpilo, your Stokvel Sami assistant. I can help you with stokvel management, product recommendations, and property investments. What would you like to know today?";
+            }
+            // Default response
+            else {
+                response = "I'm not sure I understand. I can help you with stokvel management, product recommendations, and property investments. Could you please ask about one of these topics?";
+            }
+
+            addMessage(response, 'bot');
+        }
+
+        // Initialize with a friendly message if chat is empty
+        if (chatMessages.children.length <= 2) {
+            setTimeout(() => {
+                addMessage("You can ask me about creating stokvels, finding products within your budget, or exploring property investment opportunities. What would you like to know?", 'bot');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

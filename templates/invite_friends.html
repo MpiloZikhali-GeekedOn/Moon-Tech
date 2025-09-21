@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Invite Friends - Stokvel Sami{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-people-fill text-primary me-2"></i>Invite Friends to Join</h2>
+            <p class="text-muted mb-0">Share your stokvel with friends and grow your community</p>
+        </div>
+        <div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Invite Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-envelope-plus me-2"></i>Invite to {{ stokvel_name }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label for="phone_number" class="form-label fw-bold">Friend's Phone Number</label>
+                            <input type="tel" class="form-control form-control-lg" 
+                                   id="phone_number" name="phone_number" 
+                                   required placeholder="e.g., 27607247435"
+                                   pattern="^\+?[1-9]\d{1,14}$">
+                            <div class="form-text">Enter phone number with country code (e.g., 27607247435)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Your Stokvel Join Code</label>
+                            <div class="alert alert-info d-flex align-items-center">
+                                <i class="bi bi-key me-2 fs-4"></i>
+                                <div>
+                                    <h6 class="mb-1">{{ join_code }}</h6>
+                                    <small class="mb-0">Share this code with friends so they can join your stokvel</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send me-2"></i> Send Invitation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Invites (if any) -->
+            <div class="card mt-4 shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Invites</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted text-center">No recent invitations sent yet.</p>
+                    <!-- Would display list of recent invites here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Tips Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="bi bi-lightbulb me-2"></i>Invitation Tips</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <small>Explain the purpose of your stokvel to friends</small>
+                        </li>
+                        <li class="list-group-item border-0">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <small>Share the monthly contribution amount</small>
+                        </li>
+                        <li class="list-group-item border-0">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <small>Mention the savings goals you're working towards</small>
+                        </li>
+                        <li class="list-group-item border-0">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <small>Let them know about the shopping benefits</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Alternative Sharing Methods -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-share me-2"></i>Other Sharing Methods</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary text-start" onclick="copyJoinCode()">
+                            <i class="bi bi-clipboard me-2"></i> Copy Join Code
+                        </button>
+                        <button class="btn btn-outline-success text-start" onclick="shareViaWhatsApp()">
+                            <i class="bi bi-whatsapp me-2"></i> Share via WhatsApp
+                        </button>
+                        <button class="btn btn-outline-secondary text-start" onclick="shareViaEmail()">
+                            <i class="bi bi-envelope me-2"></i> Share via Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-check-circle me-2"></i>Invitation Sent</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your invitation has been sent successfully!</p>
+                <p class="text-muted">Your friend will receive an SMS with instructions to join your stokvel.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Copy join code to clipboard
+    function copyJoinCode() {
+        navigator.clipboard.writeText("{{ join_code }}")
+            .then(() => {
+                showToast("Join code copied to clipboard!", "success");
+            })
+            .catch(err => {
+                showToast("Failed to copy join code", "error");
+            });
+    }
+
+    // Share via WhatsApp
+    function shareViaWhatsApp() {
+        const message = `Join my stokvel "{{ stokvel_name }}" on Stokvel Sami! Use code: {{ join_code }}. Let's save and shop together!`;
+        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+
+    // Share via Email
+    function shareViaEmail() {
+        const subject = `Join my stokvel: {{ stokvel_name }}`;
+        const body = `Hello! I'd like to invite you to join my stokvel "{{ stokvel_name }}" on Stokvel Sami.\n\nUse this code to join: {{ join_code }}\n\nStokvel Sami helps us save money together and get great deals on products through group buying power.\n\nLooking forward to saving and shopping with you!`;
+        const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = url;
+    }
+
+    // Show toast notification
+    function showToast(message, type = 'info') {
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle'} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        
+        // Add to container or create one
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            document.body.appendChild(toastContainer);
+        }
+        
+        toastContainer.appendChild(toast);
+        
+        // Initialize and show toast
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        
+        // Remove toast after it's hidden
+        toast.addEventListener('hidden.bs.toast', function () {
+            toast.remove();
+        });
+    }
+
+    // If form was submitted successfully, show success modal
+    {% if request.method == 'POST' and not error %}
+    document.addEventListener('DOMContentLoaded', function() {
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    });
+    {% endif %}
+
+    // Phone number input validation
+    document.getElementById('phone_number').addEventListener('input', function(e) {
+        const value = e.target.value;
+        // Basic validation - remove any non-digit characters except plus at start
+        e.target.value = value.replace(/[^0-9+]/g, '').replace(/(?!^)\+/g, '');
+    });
+</script>
+
+<style>
+    .form-control-lg {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .toast-container {
+        z-index: 1090;
+    }
+    
+    .list-group-item {
+        padding: 0.75rem 0;
+    }
+</style>
+{% endblock %}

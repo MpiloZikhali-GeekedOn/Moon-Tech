@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn More - Stokvel Sami</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0f5132;
+            --secondary-color: #ffc107;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(15, 81, 50, 0.9), rgba(15, 81, 50, 0.8)), url('https://images.unsplash.com/photo-1533750349088-cd871a92f312?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .benefit-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .benefit-item:last-child {
+            border-bottom: none;
+        }
+
+        .step-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            height: 100%;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .testimonial-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-section {
+            background: linear-gradient(rgba(15, 81, 50, 0.95), rgba(15, 81, 50, 0.9)), url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1752&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 0;
+            border-radius: 15px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover, .btn-outline-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-people-fill me-2"></i>Stokvel Sami
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('learn_more') }}">Learn More</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('create_account') }}">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Welcome to Stokvel Sami</h1>
+            <p class="lead mb-4">Transforming traditional stokvels with modern technology, smart shopping, and community empowerment</p>
+            <a href="{{ url_for('create_account') }}" class="btn btn-warning btn-lg me-3">Get Started</a>
+            <a href="#how-it-works" class="btn btn-outline-light btn-lg">Learn How It Works</a>
+        </div>
+    </section>
+
+    <!-- What is Stokvel Sami Section -->
+    <section class="container mb-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-title">What is Stokvel Sami?</h2>
+                <p class="lead mb-4">
+                    Stokvel Sami is a revolutionary platform that brings traditional community savings groups (stokvels)
+                    into the digital age. We combine the power of collective savings with smart shopping technology to
+                    help South African communities build wealth together.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-3">
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <i class="bi bi-people-fill feature-icon"></i>
+                    <h4>Community Savings</h4>
+                    <p>Create or join stokvel groups with friends, family, or community members to save money collectively.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <i class="bi bi-cart-check feature-icon"></i>
+                    <h4>Smart Shopping</h4>
+                    <p>Get AI-powered product recommendations and group buying discounts to maximize your purchasing power.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <i class="bi bi-house feature-icon"></i>
+                    <h4>Property Investment</h4>
+                    <p>Explore property investment opportunities with your stokvel to build long-term wealth.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="container mb-5">
+        <h2 class="section-title text-center">Why Choose Stokvel Sami?</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="benefit-item d-flex">
+                    <i class="bi bi-shield-check text-success me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h5>Secure & Transparent</h5>
+                        <p>All transactions are recorded and visible to members, ensuring complete transparency.</p>
+                    </div>
+                </div>
+                <div class="benefit-item d-flex">
+                    <i class="bi bi-graph-up text-success me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h5>Grow Your Money</h5>
+                        <p>Our "Grow with Sami" feature helps your stokvel savings earn potential returns.</p>
+                    </div>
+                </div>
+                <div class="benefit-item d-flex">
+                    <i class="bi bi-phone text-success me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h5>Easy Management</h5>
+                        <p>Manage contributions, payments, and communications all in one place.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="benefit-item d-flex">
+                    <i class="bi bi-cash-coin text-success me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h5>Group Buying Power</h5>
+                        <p>Get better deals and discounts by shopping together as a group.</p>
+                    </div>
+                </div>
+                <div class="benefit-item d-flex">
+                    <i class="bi bi-chat-dots text-success me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h5>AI Shopping Assistant</h5>
+                        <p>Mpilo, our AI assistant, helps you find the best products for your budget.</p>
+                    </div>
+                </div>
+                <div class="benefit-item d-flex">
+                    <i class="bi bi-building text-success me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h5>Wealth Building</h5>
+                        <p>From everyday shopping to property investments, build wealth together.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="container mb-5">
+        <h2 class="section-title text-center">How It Works</h2>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h4>Create Your Stokvel</h4>
+                    <p>Set up your stokvel group, define contribution rules, and invite members.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h4>Save Together</h4>
+                    <p>Members contribute regularly, and you track progress toward your goals.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h4>Shop & Invest</h4>
+                    <p>Use your collective funds for smart shopping or property investments.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="container mb-5">
+        <h2 class="section-title text-center">What Our Members Say</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="testimonial-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Thandi" class="testimonial-avatar">
+                        <div>
+                            <h5 class="mb-0">Thandi M.</h5>
+                            <p class="text-muted mb-0">Johannesburg</p>
+                        </div>
+                    </div>
+                    <p class="mb-0">"Stokvel Sami has transformed our savings group. We're not just saving money anymore - we're building wealth together through smart shopping and property investments."</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="testimonial-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Sipho" class="testimonial-avatar">
+                        <div>
+                            <h5 class="mb-0">Sipho K.</h5>
+                            <p class="text-muted mb-0">Cape Town</p>
+                        </div>
+                    </div>
+                    <p class="mb-0">"The AI shopping recommendations have saved our stokvel thousands of rands. We're getting better quality products for less money than ever before."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="container mb-5">
+        <h2 class="section-title text-center">Frequently Asked Questions</h2>
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="faq-item">
+                    <h5 class="faq-question">What is a stokvel?</h5>
+                    <p>A stokvel is a traditional South African community savings group where members contribute money regularly and receive payouts on a rotating basis. Stokvel Sami modernizes this concept with digital tools and additional benefits.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h5 class="faq-question">How much does it cost to use Stokvel Sami?</h5>
+                    <p>Basic stokvel management is free. We offer premium features like "Grow with Sami" investment options for a small fee, but the core functionality is completely free to use.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h5 class="faq-question">Is my money safe with Stokvel Sami?</h5>
+                    <p>Yes, we prioritize security and transparency. All transactions are recorded, and members can see exactly where money is allocated. We use bank-level security protocols to protect your information.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h5 class="faq-question">Can I join multiple stokvels?</h5>
+                    <p>Absolutely! You can participate in multiple stokvels for different purposes - one for grocery savings, another for property investment, etc.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h5 class="faq-question">How does the AI shopping assistant work?</h5>
+                    <p>Our AI assistant, Mpilo, analyzes your budget and preferences to recommend products that offer the best value for your money. It learns from your choices to provide increasingly better recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="container mb-5">
+        <div class="cta-section text-center">
+            <h2 class="mb-4">Ready to Start Your Stokvel Journey?</h2>
+            <p class="lead mb-4">Join thousands of South Africans building wealth together through community savings and smart shopping.</p>
+            <a href="{{ url_for('create_account') }}" class="btn btn-warning btn-lg me-3">Create Your Stokvel</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Login to Existing Account</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Stokvel Sami</h5>
+                    <p>Building wealth together through community savings and smart technology.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="{{ url_for('index') }}" class="text-white me-3">Home</a>
+                    <a href="#" class="text-white me-3">Privacy Policy</a>
+                    <a href="#" class="text-white">Terms of Service</a>
+                </div>
+            </div>
+            <hr class="my-3">
+            <p class="text-center mb-0">&copy; 2023 Stokvel Sami. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
